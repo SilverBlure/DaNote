@@ -3,14 +3,13 @@ import { Note } from '../interfaces/note.interface';
 import { NoteListService } from '../firebase-services/note-list.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NoteComponent } from './note/note.component';
 
 
 
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [FormsModule, CommonModule, NoteComponent],
+  imports: [FormsModule, CommonModule, ],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss'
 })
@@ -20,8 +19,7 @@ export class NoteListComponent {
   status: "notes" | "trash" = "notes";
 
   constructor(public noteService: NoteListService) {
-    this.noteList = this.getDummyData()
-  }
+}
 
   changeFavFilter(filter:"all" | "fav"){
     this.favFilter = filter;
