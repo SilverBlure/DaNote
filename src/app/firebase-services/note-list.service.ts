@@ -8,39 +8,66 @@ import { Observable } from 'rxjs';
 })
 export class NoteListService {
 
-  items;
-  items$;
+  // items;
+  // items$;
 
   firestore: Firestore = inject(Firestore);
 
-  unsubList;
+  unsubNotes;
+  unsubTrash;
 
   constructor() {
 
-    this.unsubList = onSnapshot(this.getNotesRef(), (list) => {
-      list.forEach(element => {
-        console.log(element.data());
-      })
-    })
-
-    
-
-
-    this.items$ = collectionData(this.getNotesRef());
-    this.items = this.items$.subscribe((list)=>{
-      list.forEach(element  =>{
-        console.log(element);
-      })
-    })
+    this.unsubNotes = this.subNotesList();
+    this.unsubTrash = this.subTrashList();
 
   }
 
 
   ngOnDestroy() {
-    this.unsubList();
-    this.items.unsubscribe();
+    this.unsubTrash;
+    this.unsubNotes;
   }
 
+
+
+subNotesList(){
+return onSnapshot(this.getNotesRef(), (list) => {
+      list.forEach(element => {
+        console.log(this.setNotesObject(element.data(), element.id));
+      })
+    })
+}
+
+subTrashList(){
+return  onSnapshot(this.getTrashRef(), (list) => {
+      list.forEach(element =>{
+        console.log(this.setTrashObject(element.data(), element.id))
+      })
+    })
+}
+
+
+
+  setNotesObject(obj:any, id:string){
+    return{
+    id: id || "",
+    type: obj.type || "note",
+    title: obj.title || "",
+    content: obj.content || "",
+    marked: obj.marked || false,
+    }
+}
+
+   setTrashObject(obj:any, id:string){
+    return{
+    id: id || "",
+    type: obj.type || "trash",
+    title: obj.title || "",
+    content: obj.content || "",
+    marked: obj.marked || true,
+    }
+}
 
   getNotesRef() {
     return collection(this.firestore, 'note')
